@@ -1,0 +1,21 @@
+# Camera intrinsic matrix parameters (OpenCV)
+camera:
+  fx: 537.960321985614
+  fy: 539.597659163239
+  cx: 319.183641033155
+  cy: 247.053820358135
+
+  width: 640
+  height: 480
+
+semantic_pcl:
+  color_image_topic: "/camera/rgb/image_color"
+  depth_image_topic: "/camera/depth/image"
+  point_type: 1
+  frame_id:  "openni_rgb_optical_frame"
+  #dataset: "ade20k" # sunrgbd
+  dataset: "sunrgbd" # sunrgbd
+  
+  model_path: "/home/safa/pretrained_models/pspnet/pspnet_sunrgbd_best_model180625_5k.pth"
+
+  #model_path: "/home/safa/pretrained_models/pspnet/pspnet_50_ade20k.pth"

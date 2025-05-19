@@ -1,0 +1,54 @@
+<launch>
+
+  <arg name="odom_frame_id"   default="odom"/>
+  <arg name="base_frame_id"   default="base_link"/>
+  <arg name="global_frame_id" default="map"/>
+  <arg name="odom_topic" default="odom" />
+
+  <param name="use_sim_time" type="bool" value="True"/>
+
+   <!-- Choose visualization -->
+   <arg name="rviz" default="true" />
+
+
+  <!-- TF FRAMES -->
+    
+        <!-- for TUM dataset -->
+        <remap from="/camera/rgb/image_raw"                 to="/camera/rgb/image_color"/>
+        <remap from="/camera/depth_registered/image_raw"    to="/camera/depth/image"/>
+
+        
+        <!-- Parameters for ROS -->
+        <param name="world_frame_id"    type="string"   value="world" />
+        <param name="cam_frame_id"      type="string"   value="kinect" />
+        <param name="enable_pangolin"   type="bool"     value="false" />
+      
+
+    
+
+    <node pkg="hector_trajectory_server" type="hector_trajectory_server" name="trajectory_server_orb_slam3" output="screen" ns="orb_slam3_ros" >
+        <param name="/target_frame_name" value="world" />
+        <param name="/source_frame_name" value="kinect" />
+        <param name="/trajectory_update_rate" value="20.0" />
+        <param name="/trajectory_publish_rate" value="20.0" />
+    </node>
+    
+    <rosparam file="$(find slam_semantic_mapping)/params/semantic_cloud_tum.yaml" command="load"/>
+    
+    <node pkg="slam_semantic_cloud" type="semantic_cloud.py" name="semantic_cloud" output="screen" />
+    	<env name="VALGRIND" value="true"/>
+ 
+    
+    <node pkg="tf2_ros" type="static_transform_publisher" name="openni_to_kinect_tf" 
+      args="0.017 -0.021 -0.070 -0.012 0.712 -0.702 0.016 kinect openni_rgb_optical_frame" />
+
+
+    <rosparam file="$(find slam_semantic_mapping)/params/octomap_generator.yaml" command="load"/>
+    <node pkg="octomap_generator" type="octomap_generator" name="octomap_generator" output="screen"/>
+
+
+   <!-- Visualization - RViz-->
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find orb_slam3_ros_wrapper)/config/orb_slam3_no_imu.rviz" output="screen" />
+  
+  
+</launch>
